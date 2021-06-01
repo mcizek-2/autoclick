@@ -1,4 +1,4 @@
-OUT=aclick
+OUT=autoclick
 FLAGS=-Wall -pthread -L .usr.lib32 -lX11 -lXext -lXtst
 CC=gcc
 
