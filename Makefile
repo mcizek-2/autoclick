@@ -3,7 +3,7 @@ FLAGS=-Wall -pthread -L .usr.lib32 -lX11 -lXext -lXtst
 CC=gcc
 
 compile: pipe.o
-	$(CC) main.c sharedmemory.o $(FLAGS) -o $(OUT)
+	$(CC) main.c pipe.o $(FLAGS) -o $(OUT)
 	mkdir -p $${HOME}/.local/tmp
 ifndef VERBOSE
 .SILENT:
