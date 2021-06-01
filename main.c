@@ -10,20 +10,23 @@ void *listen(){
   pthread_exit(NULL);
 }
 void click(){
-  XTestFakeButtonEvent(display, 1, True, CurrentTime);
-  XTestFakeButtonEvent(display, 1, False, CurrentTime);
-  XFlush(display);
-}
+  }
 int main(){
   if(!pipe_init()){
     stop=false;
     pthread_t th;
     pthread_create(&th, NULL, listen , NULL);
+    display = XOpenDisplay(NULL);
     while(!stop){
-      usleep(100000);
-      click();
+      //usleep(100000);
+      sleep(2);
+      XTestFakeButtonEvent(display, 1, True, CurrentTime);
+      usleep(10);
+      XTestFakeButtonEvent(display, 1, False, CurrentTime);
+      XFlush(display);
     }
     close_pipe();
+    XCloseDisplay(display);
     return 1;
   }
   else{
