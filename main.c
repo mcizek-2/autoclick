@@ -10,12 +10,9 @@ void *listen(){
   pthread_exit(NULL);
 }
 void click(){
-/*
   XTestFakeButtonEvent(display, 1, True, CurrentTime);
   XTestFakeButtonEvent(display, 1, False, CurrentTime);
   XFlush(display);
-*/
-  printf("Testing... \n");
 }
 int main(){
   if(!pipe_init()){
@@ -23,8 +20,7 @@ int main(){
     pthread_t th;
     pthread_create(&th, NULL, listen , NULL);
     while(!stop){
-      //usleep(100000);
-      sleep(3);
+      usleep(100000);
       click();
     }
     close_pipe();
