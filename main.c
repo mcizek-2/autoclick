@@ -1,39 +1,38 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#include "pipe.h"
 #include <time.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
-#include "sharedmemory.h"
+#include <pthread.h>
 static Display *display;
-
+static bool stop;
+void *listen(){
+  stop = read_pipe();
+  pthread_exit(NULL);
+}
+void click(){
+/*
+  XTestFakeButtonEvent(display, 1, True, CurrentTime);
+  XTestFakeButtonEvent(display, 1, False, CurrentTime);
+  XFlush(display);
+*/
+  printf("Testing... \n");
+}
 int main(){
-    const char* homedir = getenv("HOME");
-    const char* loc = "/.local/var/aclick";
-    char filepath[128];
-    strncpy(filepath,homedir,sizeof(filepath));
-    strncat(filepath,loc,(sizeof(filepath)-strlen(filepath)));
-    char* stop = attach_memory_block(filepath,BLOCK_SIZE);
-    if(*stop == 1){
-        *stop=0;
-        display = XOpenDisplay(NULL);
-        while(*stop==0){
-         usleep(100000);
-         XTestFakeButtonEvent(display, 1, True, CurrentTime);
-         XTestFakeButtonEvent(display, 1, False, CurrentTime);
-         XFlush(display);
-        }
-        detach_memory_block(stop);
-        destroy_memory_block(filepath);
-        return 1;
+  if(!pipe_init()){
+    stop=false;
+    pthread_t th;
+    pthread_create(&th, NULL, listen , NULL);
+    while(!stop){
+      //usleep(100000);
+      sleep(3);
+      click();
     }
-    else{
-    *stop = 1;
-    detach_memory_block(stop);
+    close_pipe();
     return 1;
-    }
-    
+  }
+  else{
+    send_close_message();
     return 1;
+  }
+
 }
