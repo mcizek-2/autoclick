@@ -2,7 +2,7 @@ OUT=aclick
 FLAGS=-Wall -pthread -L .usr.lib32 -lX11 -lXext -lXtst
 CC=gcc
 
-compile: sharedmemory.o
+compile: pipe.o
 	$(CC) main.c sharedmemory.o $(FLAGS) -o $(OUT)
 	mkdir -p $${HOME}/.local/tmp
 ifndef VERBOSE
