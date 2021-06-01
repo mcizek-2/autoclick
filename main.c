@@ -9,8 +9,6 @@ void *listen(){
   stop = read_pipe();
   pthread_exit(NULL);
 }
-void click(){
-  }
 int main(){
   if(!pipe_init()){
     stop=false;
