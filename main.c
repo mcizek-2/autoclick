@@ -18,10 +18,8 @@ int main(){
     pthread_create(&th, NULL, listen , NULL);
     display = XOpenDisplay(NULL);
     while(!stop){
-      //usleep(100000);
-      sleep(2);
+      usleep(100000);
       XTestFakeButtonEvent(display, 1, True, CurrentTime);
-      usleep(10);
       XTestFakeButtonEvent(display, 1, False, CurrentTime);
       XFlush(display);
     }
