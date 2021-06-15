@@ -4,24 +4,24 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 #include <pthread.h>
+#define SLEEP_TIME 100000
 static Display *display;
 static bool stop;
 static bool stopt;
 static bool pause_clicking;
-static bool right_pressed;
 void *listen(){//Thread that waits for the stop message.
   stop = read_pipe(); //Listens on FIFO waiting for the stop message.
   return(NULL);
 }
 
 
-void *right_click(){
+void *right_click(){//Thread that monitors when the right button is pressed.
   XLockDisplay(display);
   int revert_to;
   Window win;
   XGetInputFocus(display, &win, &revert_to);
-  XUnlockDisplay(display);
-  Window root_return;
+  XUnlockDisplay(display); //Get the current window.
+  Window root_return;//Variables for XQueryPointer
   Window child_return;
   int root_x_return;
   int root_y_return;
@@ -33,24 +33,21 @@ void *right_click(){
     XQueryPointer(display, win,&root_return, &child_return, &root_x_return, &root_y_return ,
                   &win_x_return,&win_y_return , &mask_return);
     XUnlockDisplay(display);
-    pause_clicking = ((Button3Mask & (unsigned long)mask_return) == Button3Mask);
-    usleep(100000);
+    pause_clicking = ((Button3Mask & (unsigned long)mask_return) == Button3Mask); //Pause clicking if the right button is pressed.
+    usleep(SLEEP_TIME);
   }
-  stopt = true;
+  stopt = true; //Indicates that the connection to the X server is safe to close
   return(NULL);
 }
 
 void simulate_click(){
-  //XLockDisplay(display);
   XTestFakeButtonEvent(display, 1, True, CurrentTime);
   XTestFakeButtonEvent(display, 1, False, CurrentTime);
   XFlush(display);
-  //XUnlockDisplay(display);
 }
 int main(){
   if(!pipe_init()){//If the FIFO has not been created yet.
     XInitThreads();
-    right_pressed = false;
     stopt=false;
     stop=false;
     pthread_t th1;
@@ -59,7 +56,7 @@ int main(){
     display = XOpenDisplay(NULL);
     pthread_create(&th2,NULL,right_click,NULL);
     while(!stop){//While the stop message hasn't been sent.
-      usleep(100000);//Wait 100 ms.
+      usleep(SLEEP_TIME);//Wait 100 ms.
       if(!pause_clicking){
         simulate_click();
       }

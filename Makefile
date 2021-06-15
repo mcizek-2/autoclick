@@ -18,7 +18,7 @@ install:
 ifneq ("","$(wildcard ./autoclick)")
 	cp ./autoclick /usr/local/bin/autoclick
 else
-	echo "You need to compile the file first"
+	echo "You need to compile the file first."
 endif
 uninstall:
 	rm -f /usr/local/bin/autoclick
