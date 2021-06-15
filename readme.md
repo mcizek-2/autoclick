@@ -7,7 +7,7 @@ right button is pressed.
 ## Dependencies:
 To install this software you need the gcc compiler and the X11 development libraries. In Ubuntu 20.04 the corresponding package is: libx11-dev.
 
-##Installation:
+## Installation:
 (Tested on Ubuntu 20.04) 
 
 * Clone the project in your home
